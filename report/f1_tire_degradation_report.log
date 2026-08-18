@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.1.30)  18 AUG 2026 16:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2026.1.30)  18 AUG 2026 17:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -320,36 +320,36 @@ Package hyperref Info: Link coloring OFF on input line 25.
  [1
 
 {/Users/samikrothapalli/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
-<figures/Figure1.png, id=76, 622.2447pt x 342.5598pt>
+<figures/Figure1.png, id=68, 622.2447pt x 342.5598pt>
 File: figures/Figure1.png Graphic file (type png)
 <use figures/Figure1.png>
 Package pdftex.def Info: figures/Figure1.png  used on input line 135.
 (pdftex.def)             Requested size: 413.3867pt x 227.58508pt.
-<figures/Figure2.png, id=78, 620.0766pt x 398.2077pt>
+<figures/Figure2.png, id=70, 620.0766pt x 398.2077pt>
 File: figures/Figure2.png Graphic file (type png)
 <use figures/Figure2.png>
 Package pdftex.def Info: figures/Figure2.png  used on input line 137.
 (pdftex.def)             Requested size: 413.3867pt x 265.47318pt.
  [4 <./figures/Figure1.png>]
-<figures/Figure3.png, id=85, 620.0766pt x 398.2077pt>
+<figures/Figure3.png, id=77, 620.0766pt x 398.2077pt>
 File: figures/Figure3.png Graphic file (type png)
 <use figures/Figure3.png>
 Package pdftex.def Info: figures/Figure3.png  used on input line 141.
 (pdftex.def)             Requested size: 413.3867pt x 265.47318pt.
  [5 <./figures/Figure2.png>]
-<figures/Figure4.png, id=92, 620.0766pt x 398.2077pt>
+<figures/Figure4.png, id=84, 620.0766pt x 398.2077pt>
 File: figures/Figure4.png Graphic file (type png)
 <use figures/Figure4.png>
 Package pdftex.def Info: figures/Figure4.png  used on input line 161.
 (pdftex.def)             Requested size: 413.3867pt x 265.47318pt.
  [6 <./figures/Figure3.png>]
-<figures/Figure5.png, id=100, 757.3896pt x 372.9132pt>
+<figures/Figure5.png, id=92, 757.3896pt x 372.9132pt>
 File: figures/Figure5.png Graphic file (type png)
 <use figures/Figure5.png>
 Package pdftex.def Info: figures/Figure5.png  used on input line 165.
 (pdftex.def)             Requested size: 413.3867pt x 203.53809pt.
  [7 <./figures/Figure4.png> <./figures/Figure5.png (PNG copy)>]
-<figures/Figure6.png, id=109, 501.5538pt x 370.7451pt>
+<figures/Figure6.png, id=101, 501.5538pt x 370.7451pt>
 File: figures/Figure6.png Graphic file (type png)
 <use figures/Figure6.png>
 Package pdftex.def Info: figures/Figure6.png  used on input line 181.
@@ -359,22 +359,29 @@ Package pdftex.def Info: figures/Figure6.png  used on input line 181.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-Package rerunfilecheck Info: File `f1_tire_degradation_report.out' has not changed.
-(rerunfilecheck)             Checksum: 2E08EEFEAE17B676530C79E8207B513D;1764.
+
+
+Package rerunfilecheck Warning: File `f1_tire_degradation_report.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `f1_tire_degradation_report.out':
+(rerunfilecheck)             Before: 9B66B2C6FC127194F9A7A560D19D61DC;1515
+(rerunfilecheck)             After:  2E08EEFEAE17B676530C79E8207B513D;1764.
  ) 
 Here is how much of TeX's memory you used:
- 9535 strings out of 469514
- 148818 string characters out of 5468194
- 570345 words of memory out of 5000000
- 38066 multiletter control sequences out of 15000+600000
+ 9533 strings out of 469514
+ 148796 string characters out of 5468194
+ 570354 words of memory out of 5000000
+ 38064 multiletter control sequences out of 15000+600000
  634673 words of font info for 65 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,8n,79p,570b,517s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </Users/samikrothapalli/Library/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600pk></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></Users/samikrothapalli/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on f1_tire_degradation_report.pdf (9 pages, 895257 bytes).
+Output written on f1_tire_degradation_report.pdf (9 pages, 895270 bytes).
 PDF statistics:
- 187 PDF objects out of 1000 (max. 8388607)
- 138 compressed objects within 2 object streams
+ 182 PDF objects out of 1000 (max. 8388607)
+ 133 compressed objects within 2 object streams
  30 named destinations out of 1000 (max. 500000)
- 127 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 111 words of extra memory for PDF output out of 10000 (max. 10000000)
 
