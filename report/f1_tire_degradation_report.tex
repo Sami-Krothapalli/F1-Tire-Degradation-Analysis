@@ -1,0 +1,204 @@
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\title{Finding the Cliff: Modeling Formula 1 Tire Degradation with Splines, Segmented Regression, and Regression Trees}
+\author{Sami Krothapalli}
+\date{}
+
+\newcommand{\reportfigure}[3]{%
+\begin{figure}[H]
+\centering
+\IfFileExists{figures/#1}{\includegraphics[width=0.88\textwidth]{#1}}{\fbox{\parbox[c][1.6in][c]{0.82\textwidth}{\centering Placeholder for \texttt{\detokenize{#1}}}}}
+\caption{#2}
+\label{#3}
+\end{figure}
+}
+
+\begin{document}
+\maketitle
+
+\section{Data and Prediction Task}
+
+We use the Formula 1 race-lap data from the AeroSpeed Analytics Kaggle dataset. Each observation represents one lap completed by one driver during a race. 
+The goal is to study how tire age affects lap-time performance and whether there is evidence of a sudden tire-performance ``cliff,'' where essentially lap 
+times become much worse after a specific tire age.
+
+The main file used is \texttt{f1\_race\_laps.csv}. It contains lap-level variables including \texttt{LapTime}, \texttt{LapNumber}, \texttt{Compound}, 
+\texttt{TyreLife}, \texttt{Driver}, \texttt{Team}, \texttt{GP}, \texttt{Year}, pit-stop indicators, track status, and speed measurements. The response 
+variable used in the final models is \texttt{PaceDelta\_Adjusted}, which measures how much faster or slower a lap was than expected after accounting for 
+race progress, driver, Grand Prix, and year.
+
+
+\section{Modeling Challenges}
+
+There are several challenges in using race-lap data to study tire degradation. First, raw lap time is not directly comparable across circuits because 
+each Grand Prix has a different lap length. Using raw \texttt{LapTime} would mix tire degradation with circuit differences. Second, driver and team 
+performance affect lap time independently of tire wear, so the response needs to account for baseline pace differences. Third, Formula 1 cars usually 
+get lighter as fuel burns off, so later laps can naturally become faster even when tires are older. This can hide degradation if the model does not adjust 
+for \texttt{LapNumber}. Finally, pit-stop laps, safety-car laps, wet laps, and inaccurate timing rows can create slow laps that are unrelated to tire wear.
+
+To reduce these problems, the data were cleaned before modeling. The analysis keeps accurate dry laps on soft, medium, and hard tires only. Pit-stop laps,
+non-green-flag laps, wet or intermediate tire laps, missing lap times, and missing tire-age values were removed. I also checked how many observations were 
+available at each tire age, since high tire ages often have fewer laps and can produce unstable estimates.
+
+\section{Method Choice and Alternatives Considered}
+
+Before fitting the main models, I first created an adjusted response variable. Raw \texttt{LapTime} is affected by race progress, driver ability, circuit, and season, 
+so I regressed \texttt{LapTime} on \texttt{LapNumber}, \texttt{Driver}, \texttt{GP}, and \texttt{Year}. The residuals from this model define \texttt{PaceDelta\_Adjusted}, 
+which represents how much faster or slower a lap was than expected after accounting for these race-context effects. This adjusted response is then modeled using tire-life variables and other predictors.
+
+The three main methods are splines, segmented regression, and regression trees. Each method plays a different role in the analysis. Splines are used because tire 
+degradation is unlikely to follow a perfectly straight line. In a race stint, tires may be slower at the very beginning while warming up, improve after a few laps, 
+remain stable for part of the stint, and then lose performance later. A spline can capture this kind of smooth nonlinear pattern without forcing one fixed shape.
+
+Segmented regression is used because the main research question asks whether there is a tire cliff. Unlike the spline, which shows the overall curve, segmented regression 
+gives a specific estimated tire age where the slope changes. This makes it useful for translating the idea of a tire cliff into a statistical estimate.
+
+A regression tree is used because tire degradation may depend on more than tire age alone. The tree can include many predictors at once, such as tire life, lap number, 
+compound, speed measurements, team, Grand Prix, and year. It can also identify combinations of conditions associated with slower adjusted pace, which is useful because 
+tire performance may depend on race context.
+
+Several alternatives were considered. A simple linear regression was too restrictive because it would assume that each extra lap on the tire has the same effect throughout 
+the stint. That is unrealistic if tires warm up early and degrade more heavily later. Polynomial regression could capture curvature, but high-degree polynomials can behave 
+poorly near the edges of the tire-life range and are harder to interpret as tire-wear patterns. LOESS was also considered as a smoothing method, but it is mainly descriptive 
+and does not give a simple model summary or breakpoint estimate. Ridge or LASSO regression could be useful for prediction with many predictors, but they are less directly 
+connected to the tire-cliff question because they do not naturally estimate a degradation curve or breakpoint. Therefore, splines, segmented regression, and regression trees 
+were chosen because together they cover the main goals of shape, breakpoint estimation, and prediction.
+
+
+\section{Methods}
+
+\subsection{Adjusted Pace Delta}
+
+The response variable for the main analysis is based on the residuals from an initial least-squares adjustment model. Let $Y_i$ be the lap time for lap $i$. I first fit
+\[
+Y_i = \beta_0 + \beta_1\texttt{LapNumber}_i + \alpha_{\texttt{Driver}(i)} + \gamma_{\texttt{GP}(i)} + \delta_{\texttt{Year}(i)} + \varepsilon_i.
+\]
+This is an ordinary least-squares regression with categorical fixed effects for driver, Grand Prix, and year. The residual
+\[
+\widehat{\varepsilon}_i = Y_i - \widehat{Y}_i
+\]
+defines \texttt{PaceDelta\_Adjusted}. A negative residual means the lap was faster than expected after accounting for race context, while a positive residual means the lap was slower than expected. This adjustment is needed because the tire effect would otherwise be mixed with circuit length, driver pace, year effects, and fuel burn over the race.
+
+\subsection{Regression Spline}
+
+The first tire-degradation model is a regression spline. In the notation from nonlinear regression, the unknown relationship between tire life and adjusted pace is written as a linear combination of basis functions:
+\[
+f(x) = \sum_{j=1}^{k} \theta_j B_j(x),
+\]
+where $x$ is \texttt{TyreLife}, the $B_j(x)$ terms are spline basis functions, and $k$ controls the flexibility of the curve. In this project I use a B-spline basis with \texttt{df = 6}. The fitted model is
+\[
+\texttt{PaceDelta\_Adjusted}_i = \beta_0 + f(\texttt{TyreLife}_i) + \eta_{\texttt{Compound}(i)} + e_i.
+\]
+After the basis expansion is created, fitting the spline reduces to ordinary least squares on the transformed design matrix. This method is appropriate because tire performance is unlikely to be linear over a stint. A tire may warm up early, remain stable for several laps, and then degrade later. A spline can estimate this smooth nonlinear shape without forcing a single straight-line slope.
+
+The tuning choice in this model is the degrees of freedom of the spline. A larger value would allow a more flexible curve but could follow noise at sparse tire ages; a smaller value would be smoother but might miss real curvature. I use \texttt{df = 6} as a moderate choice that is flexible enough to show warm-up and degradation while still producing a readable curve.
+
+\subsection{Segmented Regression}
+
+Segmented regression is used to estimate a possible tire-cliff point. For a proposed breakpoint $c$, the model is
+\[
+\texttt{PaceDelta\_Adjusted}_i = \beta_0 + \beta_1 x_i + \beta_2 (x_i-c)_+ + e_i,
+\]
+where $x_i = \texttt{TyreLife}_i$ and
+\[
+(x_i-c)_+ = \max(0, x_i-c).
+\]
+Before the breakpoint, the slope is $\beta_1$. After the breakpoint, the slope becomes $\beta_1 + \beta_2$. Therefore, $\beta_2$ measures how much the degradation rate changes after the proposed cliff point.
+
+I fit this model separately for soft, medium, and hard tires. For each compound, I tested candidate breakpoints from tire age 5 to 40 and selected the breakpoint with the lowest AIC. This method is less flexible than the spline, but it is more directly connected to the research question because it returns an estimated tire age where the slope changes.
+
+\subsection{Regression Tree}
+
+The regression tree predicts \texttt{PaceDelta\_Adjusted} using multiple lap and race predictors. A tree partitions the predictor space into regions $R_1, \ldots, R_M$ and predicts a constant value within each region:
+\[
+\hat{f}(x) = \sum_{m=1}^{M} c_m I(x \in R_m),
+\]
+where $c_m$ is the average response in region $R_m$. The tree chooses splits that reduce squared error, so each split is selected to make the resulting groups more homogeneous in adjusted pace delta.
+
+The candidate predictors include \texttt{TyreLife}, \texttt{LapNumber}, \texttt{Compound}, \texttt{FreshTyre}, speed measurements, team, Grand Prix, and year. Sector times were excluded because they are direct components of lap time and would make the model less meaningful as a tire-degradation model. Categorical variables were converted into dummy variables before fitting.
+
+A fully grown tree can overfit, so I regularized the tree by limiting \texttt{max\_depth = 4} and requiring \texttt{min\_samples\_leaf = 100}. These settings keep the tree interpretable and prevent splits based on very small groups of laps. Unlike the spline and segmented regression, the tree is not primarily used to estimate a smooth tire-life curve. Its role is to test whether a larger set of predictors improves prediction and to identify combinations of conditions associated with slower adjusted pace.
+
+\section{Results}
+
+After cleaning, the dataset retained 58,521 race laps. After filtering out compound/tire-age combinations with fewer than 30 observations, 57,891 laps remained. The count plot showed that soft tires have fewer long-stint observations, while hard tires are observed over longer tire ages. Therefore, the high tire-age region should be interpreted cautiously.
+
+\reportfigure{tire_life_counts.png}{Number of laps available at each tire age by compound. This figure is used as a data-quality check before interpreting high tire ages.}{fig:tire-counts}
+
+\reportfigure{adjusted_pace_delta.png}{Median adjusted pace delta by tire life and compound after cleaning and race-context adjustment.}{fig:adjusted-pace}
+
+The spline model showed that tire degradation is nonlinear. The fitted curves suggest that tires may improve early in a stint, likely due to warm-up, before adjusted pace begins to worsen as tire life increases. Soft tires showed the largest predicted pace loss, medium tires were in the middle, and hard tires showed the smallest predicted pace loss for much of the stint.
+
+\reportfigure{spline_model.png}{Spline model predictions for adjusted pace delta by tire life and compound.}{fig:spline}
+
+Segmented regression estimated the following breakpoints:
+
+\begin{table}[H]
+\centering
+\caption{Estimated segmented-regression breakpoints by compound.}
+\begin{tabular}{lrrr}
+\toprule
+Compound & Breakpoint & Before Slope & After Slope \\
+\midrule
+Hard & 25 & 0.0217 & 0.0065 \\
+Medium & 5 & -0.1706 & 0.0140 \\
+Soft & 7 & -0.2607 & 0.0297 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The soft and medium breakpoints appear to represent the transition from tire warm-up to gradual degradation rather than a dramatic late-stint cliff. The hard-tire breakpoint occurs later, but the slope after the breakpoint is not much steeper, so it does not provide strong evidence of a sudden collapse in performance.
+
+\reportfigure{segmented_regression.png}{Segmented regression fits with estimated breakpoints for each tire compound.}{fig:segmented}
+
+The regression tree achieved the lowest test RMSE. However, the tree mainly split on speed and race-context variables, suggesting that lap performance depends on more than tire age alone.
+
+\reportfigure{regression_tree.png}{Regression tree for predicting adjusted pace delta using tire, speed, team, race, and year variables.}{fig:tree}
+
+\begin{table}[H]
+\centering
+\caption{Model comparison by test RMSE.}
+\begin{tabular}{lr}
+\toprule
+Model & Test RMSE \\
+\midrule
+Regression Tree & 1.9935 \\
+Segmented Regression & 2.2567 \\
+Spline & 2.2586 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\reportfigure{model_comparison_rmse.png}{Model comparison by test RMSE. Lower RMSE indicates better predictive accuracy.}{fig:rmse}
+
+\section{Discussion and Further Work}
+
+Overall, the results suggest that Formula 1 tire degradation is real and nonlinear, but the data do not show one universal sudden tire cliff. Soft and medium tires begin losing pace earlier, while hard tires remain more stable for longer. The segmented regression breakpoints mostly capture the transition from warm-up to degradation rather than a sudden late-stint collapse.
+
+The regression tree performed best for prediction, but the spline and segmented regression were more useful for directly interpreting tire degradation. This shows why multiple methods are helpful: one method can be better for prediction, while another can be better for explanation.
+
+Future work could improve the analysis by adding track temperature, air temperature, race position, traffic, and circuit-specific effects. Tire degradation may depend heavily on the circuit surface and weather conditions, so modeling each circuit separately may reveal more specific degradation patterns.
+
+\section{References}
+
+\begin{itemize}
+\item AeroSpeed Analytics Formula 1 dataset, Kaggle.
+\item De Boor, C. (1978). \textit{A Practical Guide to Splines}. Springer.
+\item Hastie, T., Tibshirani, R., and Friedman, J. (2009). \textit{The Elements of Statistical Learning}. Springer.
+\item Wood, S. N. (2017). \textit{Generalized Additive Models: An Introduction with R}. Chapman and Hall/CRC.
+\end{itemize}
+
+\section{Appendix: Python Code}
+
+The full Python code is included in the project notebook \texttt{f1\_tyre\_degradation.ipynb}.
+
+\end{document}
