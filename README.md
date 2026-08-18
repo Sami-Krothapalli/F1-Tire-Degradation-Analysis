@@ -1,6 +1,6 @@
 # F1 Tire Degradation Analysis
 
-This repository contains a STAT 444 final project analyzing Formula 1 tire degradation using race-lap data. The project asks whether F1 tires gradually lose performance over a stint or whether there is evidence of a sudden tire-performance "cliff" where lap times become much slower.
+This project analyzes Formula 1 tire degradation using race-lap data. The project asks whether F1 tires gradually lose performance over a stint or whether there is evidence of a sudden tire-performance "cliff" where lap times become much slower.
 
 ## Project Overview
 
