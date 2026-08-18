@@ -28,13 +28,13 @@ The results suggest that tire degradation is real and nonlinear, but the data do
 .
 ├── README.md
 ├── f1_tire_degradation.ipynb (Code)
-├── F1_Tire_Degradation_Report.pdf
+├── F1_Tire_Degradation_Report.pdf (Report of Findings)
 ├── data/
 │   └── F1 Dataset/
 │       └── f1_race_laps.csv
 └── report/
     ├── f1_tire_degradation_report.tex
-    ├── f1_tire_degradation_report.pdf (Report of Findings)
+    ├── f1_tire_degradation_report.pdf 
     ├── f1_tire_degradation_report.aux
     ├── f1_tire_degradation_report.log
     ├── f1_tire_degradation_report.out
