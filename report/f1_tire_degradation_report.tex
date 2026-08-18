@@ -132,13 +132,13 @@ A fully grown tree can overfit, so I regularized the tree by limiting \texttt{ma
 
 After cleaning, the dataset retained 58,521 race laps. After filtering out compound/tire-age combinations with fewer than 30 observations, 57,891 laps remained. The count plot showed that soft tires have fewer long-stint observations, while hard tires are observed over longer tire ages. Therefore, the high tire-age region should be interpreted cautiously.
 
-\reportfigure{tire_life_counts.png}{Number of laps available at each tire age by compound. This figure is used as a data-quality check before interpreting high tire ages.}{fig:tire-counts}
+\reportfigure{Figure1.png}{Number of laps available at each tire age by compound. This figure is used as a data-quality check before interpreting high tire ages.}{fig:tire-counts}
 
-\reportfigure{adjusted_pace_delta.png}{Median adjusted pace delta by tire life and compound after cleaning and race-context adjustment.}{fig:adjusted-pace}
+\reportfigure{Figure2.png}{Median adjusted pace delta by tire life and compound after cleaning and race-context adjustment.}{fig:adjusted-pace}
 
 The spline model showed that tire degradation is nonlinear. The fitted curves suggest that tires may improve early in a stint, likely due to warm-up, before adjusted pace begins to worsen as tire life increases. Soft tires showed the largest predicted pace loss, medium tires were in the middle, and hard tires showed the smallest predicted pace loss for much of the stint.
 
-\reportfigure{spline_model.png}{Spline model predictions for adjusted pace delta by tire life and compound.}{fig:spline}
+\reportfigure{Figure3.png}{Spline model predictions for adjusted pace delta by tire life and compound.}{fig:spline}
 
 Segmented regression estimated the following breakpoints:
 
@@ -158,11 +158,11 @@ Soft & 7 & -0.2607 & 0.0297 \\
 
 The soft and medium breakpoints appear to represent the transition from tire warm-up to gradual degradation rather than a dramatic late-stint cliff. The hard-tire breakpoint occurs later, but the slope after the breakpoint is not much steeper, so it does not provide strong evidence of a sudden collapse in performance.
 
-\reportfigure{segmented_regression.png}{Segmented regression fits with estimated breakpoints for each tire compound.}{fig:segmented}
+\reportfigure{Figure4.png}{Segmented regression fits with estimated breakpoints for each tire compound.}{fig:segmented}
 
 The regression tree achieved the lowest test RMSE. However, the tree mainly split on speed and race-context variables, suggesting that lap performance depends on more than tire age alone.
 
-\reportfigure{regression_tree.png}{Regression tree for predicting adjusted pace delta using tire, speed, team, race, and year variables.}{fig:tree}
+\reportfigure{Figure5.png}{Regression tree for predicting adjusted pace delta using tire, speed, team, race, and year variables.}{fig:tree}
 
 \begin{table}[H]
 \centering
@@ -178,7 +178,7 @@ Spline & 2.2586 \\
 \end{tabular}
 \end{table}
 
-\reportfigure{model_comparison_rmse.png}{Model comparison by test RMSE. Lower RMSE indicates better predictive accuracy.}{fig:rmse}
+\reportfigure{Figure6.png}{Model comparison by test RMSE. Lower RMSE indicates better predictive accuracy.}{fig:rmse}
 
 \section{Discussion and Further Work}
 
