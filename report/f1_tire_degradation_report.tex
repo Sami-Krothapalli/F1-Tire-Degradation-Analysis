@@ -182,7 +182,11 @@ Spline & 2.2586 \\
 
 \section{Discussion and Further Work}
 
-Overall, the results suggest that Formula 1 tire degradation is real and nonlinear, but the data do not show one universal sudden tire cliff. Soft and medium tires begin losing pace earlier, while hard tires remain more stable for longer. The segmented regression breakpoints mostly capture the transition from warm-up to degradation rather than a sudden late-stint collapse.
+Overall, the results suggest that Formula 1 tire degradation is real and nonlinear, but the data do not show one universal sudden tire cliff based only on tire age. Soft and medium tires begin losing pace earlier, while hard tires remain more stable for longer. The segmented regression breakpoints mostly capture the transition from warm-up to degradation rather than a sudden late-stint collapse.
+
+This does not mean that tire cliffs do not occur in Formula 1. In practice, a cliff is often caused by the tire leaving its operating window through overheating, repeated thermal cycling, or physical wear. The dataset used here does not directly measure tire temperature, track temperature, actual wear, sliding, lock-ups, car setup, traffic, or driver tire management. As a result, \texttt{TyreLife} is only a proxy for the true physical condition of the tire. A cliff may occur in a specific stint at a specific circuit, but after aggregating across drivers, teams, compounds, and races, the effect can appear as smoother nonlinear degradation rather than one universal breakpoint.
+
+Another limitation is strategic censoring. Teams usually try to pit before a tire fully falls off the cliff. Therefore, the dataset likely contains many laps with manageable degradation but fewer laps after the tire has completely fallen outside its working range. This makes it harder for a lap-level public dataset to reveal the sharpest part of the degradation curve.
 
 The regression tree performed best for prediction, but the spline and segmented regression were more useful for directly interpreting tire degradation. This shows why multiple methods are helpful: one method can be better for prediction, while another can be better for explanation.
 
